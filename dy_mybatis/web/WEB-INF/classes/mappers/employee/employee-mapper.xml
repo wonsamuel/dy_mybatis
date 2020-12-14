@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="emp">
+	<select id="selectList" resultType="map"> 
+		SELECT * FROM EMPLOYEE ORDER BY HIRE_DATE DESC 
+	</select>
+	
+	<select id="selectKeyList" resultType="map" parameterType="map">
+		SELECT * 
+		FROM (SELECT A.*, 
+				CASE 
+					WHEN SUBSTR(EMP_NO,8,1) IN ('1','3')
+						THEN '남'
+						ELSE '여'
+						END AS GENDER
+						FROM EMPLOYEE A) 
+		WHERE 1=1
+		<if test="type != null and type != '' and key !=null and key != ''">
+			AND ${type} LIKE '%'||#{key}||'%' 	
+		</if>
+		<if test="gender != null and gender != ''">
+			AND GENDER = #{gender}			
+		</if> 
+<!-- 		<if test="salary != null and salary != ''">
+			<if test="flag eq 'ge'">
+				AND SALARY <![CDATA[>=]]> #{salary}
+			</if>
+			<if test="flag eq 'le'">
+				AND SALARY <![CDATA[<=]]> #{salary}
+			</if>
+		</if> -->
+		<if test="salary != null and salary != ''">
+			<choose>
+				<when test="flag eq 'ge'">
+					AND SALARY <![CDATA[>=]]> #{salary}
+				</when>
+				<when test="flag eq 'le'">
+					AND SALARY <![CDATA[<=]]> #{salary}
+				</when>
+			</choose>
+		</if>
+		<if test="jobs != null and jobs != ''">
+			AND JOB_CODE IN
+			<foreach collection="jobs" item="j" open="(" separator="," close=")">
+				#{j}
+			</foreach>
+		</if>
+	</select> <!-- 여기서는 #이 아니라 $를 쓴다 (왜냐하면 #을 쓰면 ''아 들어가서 문지열 데이터로 인식함) -->     <!-- <![CDATA[<=]]> == escape문 -->
+	
+	<!-- 페이징 처리 -->
+	<select id="selectEmpList" resultType="map">
+<!-- 		SELECT * FROM 
+			(SELECT A.*, ROWNUM AS ROWNUM FROM
+				SELECT * FROM EMPLOYEE)A)
+		WHERE RNUM -->
+		SELECT * FROM EMPLOYEE ORDER BY HIRE_DATE
+	</select>
+	<select id="selectEmpCount" resultType="_int">
+		SELECT COUNT(*) FROM EMPLOYEE
+	</select>
+</mapper>

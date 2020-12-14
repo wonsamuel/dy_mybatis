@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<properties resource="driver.properties"></properties> <!-- driver파일 쓸 때 밑에 key값만 쓰면 됨 -->
+	
+	<typeAliases>
+		<typeAlias type="com.mybatis.model.vo.Employee" alias="employee"/>
+	</typeAliases>
+	<environments default="dev">
+		<environment id="dev">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${user}"/>
+				<property name="password" value="${pw}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<mappers>
+		<mapper resource="/mappers/employee/employee-mapper.xml"/>
+	</mappers>
+</configuration>
